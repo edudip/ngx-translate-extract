@@ -1,5 +1,5 @@
 {
-  "name": "@biesbjerg/ngx-translate-extract",
+  "name": "@edudip/ngx-translate-extract",
   "version": "3.0.4",
   "description": "Extract strings from projects using ngx-translate",
   "main": "dist/index.js",
@@ -20,7 +20,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/biesbjerg/ngx-translate-extract.git"
+    "url": "https://github.com/edudip/ngx-translate-extract.git"
   },
   "keywords": [
     "angular",
@@ -33,12 +33,12 @@
     "i18n",
     "gettext"
   ],
-  "author": "Kim Biesbjerg <kim@biesbjerg.com>",
+  "author": "Kim Biesbjerg <kim@biesbjerg.com>, adapted by Bodo von der Heiden <b.vonderheiden@edudip.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/biesbjerg/ngx-translate-extract/issues"
+    "url": "https://github.com/edudip/ngx-translate-extract/issues"
   },
-  "homepage": "https://github.com/biesbjerg/ngx-translate-extract",
+  "homepage": "https://github.com/edudip/ngx-translate-extract",
   "engines": {
     "node": ">=4.3.2"
   },

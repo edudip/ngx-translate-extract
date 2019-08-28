@@ -6,6 +6,14 @@ import { parseTemplate, TmplAstNode, TmplAstElement, TmplAstTextAttribute } from
 
 export class DirectiveParser implements ParserInterface {
 
+	protected directionIdentifier: string = 'marker';
+
+	public constructor(options?: any) {
+		if (options && typeof options.identifier !== 'undefined') {
+			this.directionIdentifier = options.identifier;
+		}
+	}
+
 	public extract(template: string, path: string): TranslationCollection {
 		if (path && isPathAngularComponent(path)) {
 			template = extractComponentInlineTemplate(template);
@@ -62,14 +70,14 @@ export class DirectiveParser implements ParserInterface {
 	}
 
 	protected isTranslatable(node: TmplAstNode): boolean {
-		if (this.isElement(node) && node.attributes.some(attribute => attribute.name === 'translate')) {
+		if (this.isElement(node) && node.attributes.some(attribute => attribute.name === this.directionIdentifier)) {
 			return true;
 		}
 		return false;
 	}
 
 	protected getElementTranslateAttrValue(element: TmplAstElement): string {
-		const attr: TmplAstTextAttribute = element.attributes.find(attribute => attribute.name === 'translate');
+		const attr: TmplAstTextAttribute = element.attributes.find(attribute => attribute.name === this.directionIdentifier);
 		return attr && attr.value || '';
 	}
 

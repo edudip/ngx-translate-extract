@@ -29,7 +29,8 @@ export const cli = yargs
 		normalize: true
 	})
 	.check(options => {
-		options.input.forEach((dir: string) => {
+		let input:any = options.input;
+		input.forEach((dir: string) => {
 			if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
 				throw new Error(`The path you supplied was not found: '${dir}'`);
 			}
@@ -53,6 +54,12 @@ export const cli = yargs
 	.option('marker', {
 		alias: 'm',
 		describe: 'Extract strings passed to a marker function',
+		default: false,
+		type: 'string'
+	})
+	.option('directive-marker', {
+		alias: 'dm',
+		describe: 'Extract strings marked with an directive',
 		default: false,
 		type: 'string'
 	})
@@ -96,7 +103,7 @@ export const cli = yargs
 	.exitProcess(true)
 	.parse(process.argv);
 
-const extractTask = new ExtractTask(cli.input, cli.output, {
+const extractTask = new ExtractTask(cli.input as any, cli.output, {
 	replace: cli.replace,
 	patterns: cli.patterns
 });
@@ -104,12 +111,19 @@ const extractTask = new ExtractTask(cli.input, cli.output, {
 // Parsers
 const parsers: ParserInterface[] = [
 	new PipeParser(),
-	new DirectiveParser(),
+	new DirectiveParser({
+		identifier: 'translation'
+	}),
 	new ServiceParser()
 ];
 if (cli.marker) {
 	parsers.push(new FunctionParser({
 		identifier: cli.marker
+	}));
+}
+if (cli.directiveMarker) {
+	parsers.push(new DirectiveParser({
+		identifier: cli.directiveMarker
 	}));
 }
 extractTask.setParsers(parsers);
