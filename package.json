@@ -16,7 +16,8 @@
     "watch": "npm run clean && tsc --watch",
     "clean": "rm -rf ./dist",
     "lint": "tslint --force './src/**/*.ts'",
-    "test": "mocha -r ts-node/register tests/**/*.spec.ts"
+    "test": "mocha -r ts-node/register tests/**/*.spec.ts",
+    "prepare": "tsc"
   },
   "repository": {
     "type": "git",
