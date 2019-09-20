@@ -9,6 +9,7 @@ export * from './parsers/parser.interface';
 export * from './parsers/abstract-ast.parser';
 export * from './parsers/directive.parser';
 export * from './parsers/pipe.parser';
+export * from './parsers/localize-pipe.parser';
 export * from './parsers/service.parser';
 export * from './parsers/function.parser';
 

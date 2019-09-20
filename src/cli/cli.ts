@@ -4,6 +4,7 @@ import * as yargs from 'yargs';
 import { ExtractTask } from './tasks/extract.task';
 import { ParserInterface } from '../parsers/parser.interface';
 import { PipeParser } from '../parsers/pipe.parser';
+import { LocalizePipeParser } from '../parsers/localize-pipe.parser';
 import { DirectiveParser } from '../parsers/directive.parser';
 import { ServiceParser } from '../parsers/service.parser';
 import { FunctionParser } from '../parsers/function.parser';
@@ -100,6 +101,12 @@ export const cli = yargs
 		default: false,
 		type: 'boolean'
 	})
+	.option('routes-prefix', {
+		alias: 'rp',
+		describe: 'Use as prefix for routes, extracted by "localize"',
+		default: 'ROUTES.',
+		type: 'string'
+	})
 	.exitProcess(true)
 	.parse(process.argv);
 
@@ -114,7 +121,10 @@ const parsers: ParserInterface[] = [
 	new DirectiveParser({
 		identifier: 'translation'
 	}),
-	new ServiceParser()
+	new ServiceParser(),
+	new LocalizePipeParser({
+		prefix: cli.routesPrefix
+	})
 ];
 if (cli.marker) {
 	parsers.push(new FunctionParser({
