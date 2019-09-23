@@ -5,6 +5,7 @@ import { ExtractTask } from './tasks/extract.task';
 import { ParserInterface } from '../parsers/parser.interface';
 import { PipeParser } from '../parsers/pipe.parser';
 import { LocalizePipeParser } from '../parsers/localize-pipe.parser';
+import { RoutesParser } from '../parsers/routes.parser';
 import { DirectiveParser } from '../parsers/directive.parser';
 import { ServiceParser } from '../parsers/service.parser';
 import { FunctionParser } from '../parsers/function.parser';
@@ -123,6 +124,9 @@ const parsers: ParserInterface[] = [
 	}),
 	new ServiceParser(),
 	new LocalizePipeParser({
+		prefix: cli.routesPrefix
+	}),
+	new RoutesParser({
 		prefix: cli.routesPrefix
 	})
 ];
