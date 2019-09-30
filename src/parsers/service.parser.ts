@@ -18,6 +18,19 @@ import { TranslationCollection } from '../utils/translation.collection';
 export class ServiceParser extends AbstractAstParser implements ParserInterface {
 
 	protected sourceFile: SourceFile;
+	protected serviceIdentifiers: string[] = ["TranslateService.get", "TranslateService.instant", "TranslateService.stream"];
+	protected services: string[] = ["TranslateService"];
+
+	public constructor(options?: any) {
+		super();
+		if (options && typeof options.identifiers !== 'undefined') {
+			this.serviceIdentifiers = options.identifiers.split(',');
+			this.services = [];
+			this.serviceIdentifiers.forEach(identifier => {
+				this.services.push(identifier.split('.')[0]);
+			 });
+		}
+	}
 
 	public extract(template: string, path: string): TranslationCollection {
 		let collection: TranslationCollection = new TranslationCollection();
@@ -30,28 +43,44 @@ export class ServiceParser extends AbstractAstParser implements ParserInterface 
 				return;
 			}
 
-			const propertyName: string = this.findTranslateServicePropertyName(constructorNode);
-			if (!propertyName) {
-				return;
-			}
-
-			const callNodes = this.findCallNodes(classNode, propertyName);
-			callNodes.forEach(callNode => {
-				const keys: string[] = this.getStringLiterals(callNode);
-				if (keys && keys.length) {
-					collection = collection.addKeys(keys);
+			this.services.forEach(serviceName => {
+				const propertyName: string = this.findTranslateServicePropertyName(constructorNode, serviceName);
+				if (!propertyName) {
+					return;
 				}
+
+				let methods: string[] = this.getMethodsForService(serviceName);
+				const callNodes = this.findCallNodes(classNode, propertyName, methods);
+				callNodes.forEach(callNode => {
+					const keys: string[] = this.getStringLiterals(callNode);
+					if (keys && keys.length) {
+						collection = collection.addKeys(keys);
+					}
+				});
 			});
 		});
 
 		return collection;
 	}
 
+	protected getMethodsForService(serviceName: string): string[] {
+		let methods: string[] = [];
+
+		this.serviceIdentifiers.forEach(identifier => {
+			let splitted: string[] = identifier.split('.');
+			if (splitted[0] == serviceName) {
+				methods.push(splitted[1]);
+			}
+		});
+
+		return methods;
+	}
+
 	/**
 	 * Detect what the TranslateService instance property
 	 * is called by inspecting constructor arguments
 	 */
-	protected findTranslateServicePropertyName(constructorNode: ConstructorDeclaration): string {
+	protected findTranslateServicePropertyName(constructorNode: ConstructorDeclaration, serviceName: string): string {
 		if (!constructorNode) {
 			return null;
 		}
@@ -73,7 +102,7 @@ export class ServiceParser extends AbstractAstParser implements ParserInterface 
 				return false;
 			}
 			const className: string = parameterType.text;
-			if (className !== 'TranslateService') {
+			if (className !== serviceName) {
 				return false;
 			}
 
@@ -105,7 +134,7 @@ export class ServiceParser extends AbstractAstParser implements ParserInterface 
 	/**
 	 * Find all calls to TranslateService methods
 	 */
-	protected findCallNodes(node: Node, propertyIdentifier: string): CallExpression[] {
+	protected findCallNodes(node: Node, propertyIdentifier: string, methods: string[]): CallExpression[] {
 		let callNodes = this.findNodes(node, [SyntaxKind.CallExpression]) as CallExpression[];
 		callNodes = callNodes
 			.filter(callNode => {
@@ -129,7 +158,7 @@ export class ServiceParser extends AbstractAstParser implements ParserInterface 
 				if (!methodAccess || methodAccess.kind !== SyntaxKind.PropertyAccessExpression) {
 					return false;
 				}
-				if (!methodAccess.name || (methodAccess.name.text !== 'get' && methodAccess.name.text !== 'instant' && methodAccess.name.text !== 'stream')) {
+				if (!methodAccess.name || methods.indexOf(methodAccess.name.text) ===-1) {
 					return false;
 				}
 

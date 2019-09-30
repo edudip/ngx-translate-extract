@@ -108,6 +108,12 @@ export const cli = yargs
 		default: 'ROUTES.',
 		type: 'string'
 	})
+	.option('service-markers', {
+		alias: 'im',
+		describe: 'Extract strings marked with an service',
+		default: 'TranslateService.get,TranslateService.instant,TranslateService.stream',
+		type: 'string'
+	})
 	.exitProcess(true)
 	.parse(process.argv);
 
@@ -122,7 +128,9 @@ const parsers: ParserInterface[] = [
 	new DirectiveParser({
 		identifier: 'translation'
 	}),
-	new ServiceParser(),
+	new ServiceParser({
+		identifiers: cli.serviceMarkers
+	}),
 	new LocalizePipeParser({
 		prefix: cli.routesPrefix
 	}),
