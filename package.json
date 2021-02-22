@@ -1,6 +1,6 @@
 {
   "name": "@edudip/ngx-translate-extract",
-  "version": "3.0.4",
+  "version": "3.0.5",
   "description": "Extract strings from projects using ngx-translate",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -61,7 +61,7 @@
     "@angular/compiler": "^8.2.2",
     "boxen": "^4.1.0",
     "colorette": "^1.1.0",
-    "flat": "github:lenchvolodymyr/flat#ffe77ef",
+    "flat": "github:lenchvolodymyr/flat",
     "gettext-parser": "^4.0.1",
     "glob": "^7.1.4",
     "mkdirp": "^0.5.1",
